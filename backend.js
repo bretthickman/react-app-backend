@@ -71,6 +71,26 @@ function findUserById(id) {
     //return users['users_list'].filter( (user) => user['id'] === id);
 }
 
+app.post('/users', (req, res) => {
+    const userToAdd = req.body;
+    addUser(userToAdd);
+    res.status(200).end();
+});
+
+function addUser(user){
+    users['users_list'].push(user);
+}
+
+app.delete('/users', (req, res) => {
+    const userToDelete = req.body;
+    let result = removeUser(userToDelete);
+    res.status(200).end();
+});
+
+function removeUser(user){
+    users['users_list'] = users['users_list'].filter(value => value['id'] != user['id']);
+}
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });  
