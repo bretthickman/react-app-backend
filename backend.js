@@ -41,8 +41,9 @@ app.get('/', (req, res) => {
 
 app.get('/users', (req, res) => {
     const name = req.query.name;
+    const id = req.query.id;
     if (name != undefined){
-        let result = findUserByName(name);
+        let result = findUserByName(name, id);
         result = {users_list: result};
         res.send(result);
     }
@@ -51,8 +52,8 @@ app.get('/users', (req, res) => {
     }
 });
 
-const findUserByName = (name) => { 
-    return users['users_list'].filter( (user) => user['name'] === name); 
+const findUserByName = (name, id) => { 
+    return users['users_list'].filter( (user) => user['name'] === name && user['id'] == id); 
 }
 
 app.get('/users/:id', (req, res) => {
