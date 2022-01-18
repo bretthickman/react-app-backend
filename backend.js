@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const port = 5000;
 
@@ -33,6 +34,7 @@ const users = {
     ]
  }
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -74,22 +76,44 @@ function findUserById(id) {
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    addUser(userToAdd);
-    res.status(200).end();
+    var newUser = addUser(userToAdd);
+    res.status(201).send(newUser).end();
 });
 
 function addUser(user){
+    if(user['id'] == null)
+        user['id'] = generateID();
     users['users_list'].push(user);
+    return user;
+}
+
+function generateID() {
+    var id = '';
+    var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    for(var i = 0; i < 6; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
 }
 
 app.delete('/users', (req, res) => {
     const userToDelete = req.body;
     let result = removeUser(userToDelete);
-    res.status(200).end();
+    res.status(204).end();
 });
+
+app.delete('/users/:id', (req, res) => {
+    const id = req.params['id'];
+    removeUserByID(id);
+    res.status(204).end();
+})
 
 function removeUser(user){
     users['users_list'] = users['users_list'].filter(value => value['id'] != user['id']);
+}
+
+function removeUserByID(id){
+    users['users_list'] = users['users_list'].filter(value => value['id'] != id);
 }
 
 app.listen(port, () => {
