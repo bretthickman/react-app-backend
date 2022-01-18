@@ -98,14 +98,19 @@ function generateID() {
 
 app.delete('/users', (req, res) => {
     const userToDelete = req.body;
-    let result = removeUser(userToDelete);
+    removeUser(userToDelete);
     res.status(204).end();
 });
 
 app.delete('/users/:id', (req, res) => {
     const id = req.params['id'];
-    removeUserByID(id);
-    res.status(204).end();
+    let result = removeUserByID(id);
+    if (result.length == 0) {
+        res.status(404).send('Resource not found.');
+    }
+    else {
+        res.status(204).end();
+    }
 })
 
 function removeUser(user){
@@ -113,7 +118,10 @@ function removeUser(user){
 }
 
 function removeUserByID(id){
-    users['users_list'] = users['users_list'].filter(value => value['id'] != id);
+    var newList = users['users_list'].filter(value => value['id'] != id);
+    var check = users['users_list'].filter(value => value['id'] == id);
+    users['users_list'] = newList;
+    return check;
 }
 
 app.listen(port, () => {
